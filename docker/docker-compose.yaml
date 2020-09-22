@@ -1,9 +1,8 @@
 version: '3.5'
-
+#Docker for postgress+pgadmin
 services:
   postgres:
     #client will be at 172.24.0.1
-    #entities: [___dirname + '/../**/*.entity.{js,ts']
     container_name: postgres_container
     image: postgres:12.1
     environment:
