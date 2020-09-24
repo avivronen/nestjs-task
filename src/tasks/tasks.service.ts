@@ -8,6 +8,7 @@ import { TaskRepository } from './task.repository';
 import { TaskStatus } from './task-status.enum';
 import { DeleteResult } from 'typeorm';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { User } from '../auth/user.entity';
 
 @Injectable()
 export class TasksService {
@@ -16,35 +17,35 @@ export class TasksService {
     private taskRepository: TaskRepository
   ) {}
 
-  async getTaskById(id: number): Promise<Task> {
-    const found = await this.taskRepository.findOne(id);
+  async getTaskById(id: number, user: User): Promise<Task> {
+    const found = await this.taskRepository.findOne({where: { id, userId: user.id }});
     if(!found) {
       throw new NotFoundException(`Task with "${id}" not found`);
     }
     return found;
   }
 
-  async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.taskRepository.createTask(createTaskDto);
+  async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
+    return this.taskRepository.createTask(createTaskDto, user);
   }
 
-  async deleteTaskById(id: number): Promise<DeleteResult> {
+  async deleteTaskById(id: number, user: User): Promise<DeleteResult> {
     //const task = await this.getTaskById(id);
-    const result = await this.taskRepository.delete({id: id});
+    const result = await this.taskRepository.delete({id: id, userId: user.id});
     if(result.affected === 0) {
       throw new NotFoundException(`Task with "${id}" not found`);
     }
     return result;
   }
 
-  async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
-    const task = await this.getTaskById(id);
+  async updateTaskStatus(id: number, status: TaskStatus, user: User): Promise<Task> {
+    const task = await this.getTaskById(id, user);
     task.status = status;
     return await task.save();
   }
 
-  async getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
-    return await this.taskRepository.getTasks(filterDto);
+  async getTasks(filterDto: GetTasksFilterDto, user: User): Promise<Task[]> {
+    return await this.taskRepository.getTasks(filterDto, user);
   }
 
   /*private tasks: Task[] = [];
