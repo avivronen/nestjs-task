@@ -7,8 +7,14 @@ async function bootstrap() {
   //NODE_ENV
   //PORT=3005 npm run start:dev
   const serverConfig = config.get('server');
+
   const logger = new Logger('bootstrap');
   const app = await NestFactory.create(AppModule);
+  if(process.env.NODE_ENV === 'development') {
+    logger.warn(`development mode - cors enabled`)
+    app.enableCors();
+  }
+
   const port = process.env.PORT || serverConfig.port;
 
   await app.listen(port);
