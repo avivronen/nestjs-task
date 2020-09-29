@@ -6,6 +6,7 @@ import * as config from 'config';
 async function bootstrap() {
   //NODE_ENV
   //PORT=3005 npm run start:dev
+  //for production use npm run-script build and npm start:prod npm run prebuild && npm run build
   const serverConfig = config.get('server');
 
   const logger = new Logger('bootstrap');
